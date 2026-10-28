@@ -26,4 +26,3 @@ public class PatientService
     public Task<bool> DeleteAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.DeleteAsync(id); }
 }
 
-}

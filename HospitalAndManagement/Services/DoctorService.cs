@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalManagementSystem.Models;
+using HospitalManagementSystem.Repositories;
+namespace HospitalManagementSystem.Services;
 
-namespace HospitalAndManagement.Services
+public class DoctorService
 {
-    internal class DoctorService
+    private readonly DoctorRepository _repository;
+    public DoctorService(DoctorRepository repository) => _repository = repository;
+    public Task<int> AddAsync(Doctor d)
     {
+        if (string.IsNullOrWhiteSpace(d.FullName)) throw new ArgumentException("Doctor name is required.");
+        if (string.IsNullOrWhiteSpace(d.Specialization)) throw new ArgumentException("Specialization is required.");
+        if (string.IsNullOrWhiteSpace(d.Phone)) throw new ArgumentException("Doctor phone is required.");
+        if (d.ConsultationFee < 0) throw new ArgumentException("Consultation fee cannot be negative.");
+        return _repository.AddAsync(d);
     }
 }
