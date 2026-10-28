@@ -7,6 +7,9 @@ public class AdmissionService
     private readonly AdmissionRepository _repository;
     public AdmissionService(AdmissionRepository repository) => _repository = repository;
     public Task<int> AddAsync(Admission a) { Validate(a); return _repository.AddAsync(a); }
+    public Task<List<Admission>> GetAllAsync() => _repository.GetAllAsync();
+    public Task<Admission?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
+
     private static void Validate(Admission a)
     {
         if (a.PatientId <= 0 || a.DoctorId <= 0) throw new ArgumentException("Patient and doctor IDs must be positive.");
