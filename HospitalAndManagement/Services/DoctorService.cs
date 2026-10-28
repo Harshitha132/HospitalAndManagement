@@ -16,5 +16,12 @@ public class DoctorService
     }
     public Task<List<Doctor>> GetAllAsync() => _repository.GetAllAsync();
     public Task<Doctor?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
+    public Task<bool> UpdateAsync(Doctor d)
+    {
+        if (d.DoctorId <= 0) throw new ArgumentOutOfRangeException(nameof(d.DoctorId));
+        if (string.IsNullOrWhiteSpace(d.FullName) || string.IsNullOrWhiteSpace(d.Specialization)) throw new ArgumentException("Name and specialization are required.");
+        if (d.ConsultationFee < 0) throw new ArgumentException("Consultation fee cannot be negative.");
+        return _repository.UpdateAsync(d);
+    }
 
 }
