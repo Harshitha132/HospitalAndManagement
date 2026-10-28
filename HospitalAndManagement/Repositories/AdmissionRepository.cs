@@ -43,6 +43,20 @@ public class AdmissionRepository
         await using var r = await cmd.ExecuteReaderAsync();
         return await r.ReadAsync() ? Map(r) : null;
     }
+    public async Task<bool> UpdateAsync(Admission a)
+    {
+        const string sql = """
+            UPDATE dbo.Admissions SET PatientId=@PatientId, DoctorId=@DoctorId, AdmissionDate=@AdmissionDate,
+                DischargeDate=@DischargeDate, RoomNumber=@Room, Diagnosis=@Diagnosis, Status=@Status
+            WHERE AdmissionId=@Id;
+            """;
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        AddFields(cmd, a);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = a.AdmissionId;
+        await c.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() > 0;
+    }
 
 
     private static void AddFields(SqlCommand cmd, Admission a)
