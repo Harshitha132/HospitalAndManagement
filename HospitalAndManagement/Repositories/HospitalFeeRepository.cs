@@ -21,6 +21,29 @@ public class HospitalFeeRepository
         await c.OpenAsync();
         return Convert.ToInt32(await cmd.ExecuteScalarAsync());
     }
+    public async Task<List<HospitalFee>> GetAllAsync()
+    {
+        const string sql = "SELECT HospitalFeeId, AdmissionId, ConsultationFee, RoomCharges, MedicineCharges, OtherCharges, TotalAmount, PaymentStatus, PaymentDate FROM dbo.HospitalFees ORDER BY HospitalFeeId;";
+        var list = new List<HospitalFee>();
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        while (await r.ReadAsync()) list.Add(Map(r));
+        return list;
+    }
+
+    public async Task<HospitalFee?> GetByIdAsync(int id)
+    {
+        const string sql = "SELECT HospitalFeeId, AdmissionId, ConsultationFee, RoomCharges, MedicineCharges, OtherCharges, TotalAmount, PaymentStatus, PaymentDate FROM dbo.HospitalFees WHERE HospitalFeeId=@Id;";
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        return await r.ReadAsync() ? Map(r) : null;
+    }
+
     private static void AddFields(SqlCommand cmd, HospitalFee f)
     {
         cmd.Parameters.Add("@AdmissionId", SqlDbType.Int).Value = f.AdmissionId;
