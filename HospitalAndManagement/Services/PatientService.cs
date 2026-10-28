@@ -16,5 +16,12 @@ public class PatientService
     }
     public Task<List<Patient>> GetAllAsync() => _repository.GetAllAsync();
     public Task<Patient?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
-   
+    public Task<bool> UpdateAsync(Patient p)
+    {
+        if (p.PatientId <= 0) throw new ArgumentOutOfRangeException(nameof(p.PatientId));
+        if (string.IsNullOrWhiteSpace(p.FullName) || string.IsNullOrWhiteSpace(p.Phone)) throw new ArgumentException("Name and phone are required.");
+        if (!new[] { "Female", "Male", "Other" }.Contains(p.Gender)) throw new ArgumentException("Invalid gender.");
+        return _repository.UpdateAsync(p);
+    }
+
 }
