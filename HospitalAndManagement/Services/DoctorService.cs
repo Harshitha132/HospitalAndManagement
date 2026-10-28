@@ -14,4 +14,7 @@ public class DoctorService
         if (d.ConsultationFee < 0) throw new ArgumentException("Consultation fee cannot be negative.");
         return _repository.AddAsync(d);
     }
+    public Task<List<Doctor>> GetAllAsync() => _repository.GetAllAsync();
+    public Task<Doctor?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
+
 }
