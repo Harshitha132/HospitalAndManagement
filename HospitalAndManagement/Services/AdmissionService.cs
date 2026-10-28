@@ -10,6 +10,7 @@ public class AdmissionService
     public Task<List<Admission>> GetAllAsync() => _repository.GetAllAsync();
     public Task<Admission?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
     public Task<bool> UpdateAsync(Admission a) { if (a.AdmissionId <= 0) throw new ArgumentOutOfRangeException(nameof(a.AdmissionId)); Validate(a); return _repository.UpdateAsync(a); }
+    public Task<bool> DeleteAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.DeleteAsync(id); }
     private static void Validate(Admission a)
     {
         if (a.PatientId <= 0 || a.DoctorId <= 0) throw new ArgumentException("Patient and doctor IDs must be positive.");
