@@ -42,6 +42,19 @@ public class DoctorRepository
         await using var r = await cmd.ExecuteReaderAsync();
         return await r.ReadAsync() ? Map(r) : null;
     }
+    public async Task<bool> UpdateAsync(Doctor d)
+    {
+        const string sql = """
+            UPDATE dbo.Doctors SET FullName=@Name, Specialization=@Specialization, Phone=@Phone,
+                Email=@Email, ConsultationFee=@Fee, IsActive=@Active WHERE DoctorId=@Id;
+            """;
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        AddFields(cmd, d);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = d.DoctorId;
+        await c.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() > 0;
+    }
 
     private static void AddFields(SqlCommand cmd, Doctor d)
     {
