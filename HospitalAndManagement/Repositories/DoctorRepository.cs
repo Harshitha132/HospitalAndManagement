@@ -20,6 +20,29 @@ public class DoctorRepository
         await c.OpenAsync();
         return Convert.ToInt32(await cmd.ExecuteScalarAsync());
     }
+    public async Task<List<Doctor>> GetAllAsync()
+    {
+        const string sql = "SELECT DoctorId, FullName, Specialization, Phone, Email, ConsultationFee, IsActive FROM dbo.Doctors ORDER BY DoctorId;";
+        var list = new List<Doctor>();
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        while (await r.ReadAsync()) list.Add(Map(r));
+        return list;
+    }
+
+    public async Task<Doctor?> GetByIdAsync(int id)
+    {
+        const string sql = "SELECT DoctorId, FullName, Specialization, Phone, Email, ConsultationFee, IsActive FROM dbo.Doctors WHERE DoctorId=@Id;";
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        return await r.ReadAsync() ? Map(r) : null;
+    }
+
     private static void AddFields(SqlCommand cmd, Doctor d)
     {
         cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 120).Value = d.FullName;
