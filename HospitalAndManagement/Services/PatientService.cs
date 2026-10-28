@@ -14,4 +14,7 @@ public class PatientService
         if (string.IsNullOrWhiteSpace(p.Phone)) throw new ArgumentException("Patient phone is required.");
         return _repository.AddAsync(p);
     }
+    public Task<List<Patient>> GetAllAsync() => _repository.GetAllAsync();
+    public Task<Patient?> GetByIdAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.GetByIdAsync(id); }
+   
 }
