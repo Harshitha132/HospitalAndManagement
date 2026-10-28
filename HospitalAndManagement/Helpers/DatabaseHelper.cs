@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
 
-namespace HospitalAndManagement.Helpers
+namespace HospitalManagementSystem.Helpers;
+
+public static class DatabaseHelper
 {
-    internal class DatabaseHelper
-    {
-    }
+    private const string ConnectionString =
+        @"Server=.\SQLEXPRESS;Database=HospitalManagementDB;" +
+        @"Trusted_Connection=True;TrustServerCertificate=True;";
+
+    public static SqlConnection CreateConnection()
+        => new SqlConnection(ConnectionString);
 }
