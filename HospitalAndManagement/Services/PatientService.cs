@@ -23,5 +23,7 @@ public class PatientService
         if (!new[] { "Female", "Male", "Other" }.Contains(p.Gender)) throw new ArgumentException("Invalid gender.");
         return _repository.UpdateAsync(p);
     }
+    public Task<bool> DeleteAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.DeleteAsync(id); }
+}
 
 }
