@@ -21,6 +21,29 @@ public class AdmissionRepository
         return Convert.ToInt32(await cmd.ExecuteScalarAsync());
     }
 
+    public async Task<List<Admission>> GetAllAsync()
+    {
+        const string sql = "SELECT AdmissionId, PatientId, DoctorId, AdmissionDate, DischargeDate, RoomNumber, Diagnosis, Status FROM dbo.Admissions ORDER BY AdmissionId;";
+        var list = new List<Admission>();
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        while (await r.ReadAsync()) list.Add(Map(r));
+        return list;
+    }
+
+    public async Task<Admission?> GetByIdAsync(int id)
+    {
+        const string sql = "SELECT AdmissionId, PatientId, DoctorId, AdmissionDate, DischargeDate, RoomNumber, Diagnosis, Status FROM dbo.Admissions WHERE AdmissionId=@Id;";
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+        await c.OpenAsync();
+        await using var r = await cmd.ExecuteReaderAsync();
+        return await r.ReadAsync() ? Map(r) : null;
+    }
+
 
     private static void AddFields(SqlCommand cmd, Admission a)
     {
