@@ -49,6 +49,19 @@ public class PatientRepository
         await using var r = await cmd.ExecuteReaderAsync();
         return await r.ReadAsync() ? Map(r) : null;
     }
+    public async Task<bool> UpdateAsync(Patient p)
+    {
+        const string sql = """
+            UPDATE dbo.Patients SET FullName=@Name, DateOfBirth=@Dob, Gender=@Gender,
+                Phone=@Phone, Email=@Email, Address=@Address WHERE PatientId=@Id;
+            """;
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        AddFields(cmd, p);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = p.PatientId;
+        await c.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() > 0;
+    }
 
 
 
