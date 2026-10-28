@@ -55,6 +55,15 @@ public class DoctorRepository
         await c.OpenAsync();
         return await cmd.ExecuteNonQueryAsync() > 0;
     }
+    public async Task<bool> DeleteAsync(int id)
+    {
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand("DELETE FROM dbo.Doctors WHERE DoctorId=@Id;", c);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+        await c.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() > 0;
+    }
+
 
     private static void AddFields(SqlCommand cmd, Doctor d)
     {
