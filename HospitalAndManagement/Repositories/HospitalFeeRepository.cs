@@ -43,6 +43,20 @@ public class HospitalFeeRepository
         await using var r = await cmd.ExecuteReaderAsync();
         return await r.ReadAsync() ? Map(r) : null;
     }
+    public async Task<bool> UpdateAsync(HospitalFee f)
+    {
+        const string sql = """
+            UPDATE dbo.HospitalFees SET AdmissionId=@AdmissionId, ConsultationFee=@Consultation,
+                RoomCharges=@Room, MedicineCharges=@Medicine, OtherCharges=@Other,
+                PaymentStatus=@Status, PaymentDate=@PaymentDate WHERE HospitalFeeId=@Id;
+            """;
+        await using var c = DatabaseHelper.CreateConnection();
+        await using var cmd = new SqlCommand(sql, c);
+        AddFields(cmd, f);
+        cmd.Parameters.Add("@Id", SqlDbType.Int).Value = f.HospitalFeeId;
+        await c.OpenAsync();
+        return await cmd.ExecuteNonQueryAsync() > 0;
+    }
 
     private static void AddFields(SqlCommand cmd, HospitalFee f)
     {
