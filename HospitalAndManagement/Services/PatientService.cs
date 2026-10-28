@@ -1,10 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HospitalManagementSystem.Models;
+using HospitalManagementSystem.Repositories;
+namespace HospitalManagementSystem.Services;
 
-namespace HospitalAndManagement.Services
+public class PatientService
 {
-    internal class PatientService
+    private readonly PatientRepository _repository;
+    public PatientService(PatientRepository repository) => _repository = repository;
+    public Task<int> AddAsync(Patient p)
     {
+        if (string.IsNullOrWhiteSpace(p.FullName)) throw new ArgumentException("Patient name is required.");
+        if (p.DateOfBirth.Date > DateTime.Today) throw new ArgumentException("Date of birth cannot be in the future.");
+        if (!new[] { "Female", "Male", "Other" }.Contains(p.Gender)) throw new ArgumentException("Gender must be Female, Male, or Other.");
+        if (string.IsNullOrWhiteSpace(p.Phone)) throw new ArgumentException("Patient phone is required.");
+        return _repository.AddAsync(p);
     }
 }
