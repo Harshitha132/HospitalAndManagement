@@ -23,5 +23,7 @@ public class DoctorService
         if (d.ConsultationFee < 0) throw new ArgumentException("Consultation fee cannot be negative.");
         return _repository.UpdateAsync(d);
     }
+    public Task<bool> DeleteAsync(int id) { if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id)); return _repository.DeleteAsync(id); }
+}
 
 }
